@@ -1,20 +1,16 @@
 package klondike.models;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import mockit.Expectations;
-import mockit.Mocked;
 
 public class GameTest {
-
-	@Mocked private Foundation foundation;
 	
 	@Test
 	public void testClear() {
@@ -70,11 +66,82 @@ public class GameTest {
 	
 	@Test
 	public void testIsFinished() {
-		new Expectations() {{
-			foundation.isComplete(); result = true;
-		}};
-		Game game = new Game();
-		assertTrue(game.isFinished());
+		assertTrue(new CompleteGameBuilder().build().isFinished());
 	}
+	
+	@Test
+	public void testMoveFromStockToWaste() {
+		Game game = new Game();
+		Card card = game.getStock().peek();
+		assertEquals(null, game.moveFromStockToWaste());
+		assertNotEquals(card, game.getStock().peek());
+		assertEquals(card, game.getWaste().peek());
+	}
+	
+	@Test
+	public void testMoveFromStockToWasteWithError() {
+		Game game = new Game();
+		Stock stock = game.getStock();
+		while (!stock.empty()) {
+			stock.pop();
+		}
+		assertEquals(Error.EMPTY_STOCK, game.moveFromStockToWaste());
+	}
+	
+	@Test
+	public void testMoveFromWasteToFoundation() {
+		Suit suit = Suit.PIKES;
+		Card card = new CardBuilder().number(Number.AS).suit(suit).build();
+		Game game = new Game();
+		game.getWaste().push(card);
+		assertEquals(null, game.moveFromWasteToFoundation(suit));
+		assertEquals(card, game.getFoundations().get(suit).peek());
+	}
+	
+	@Test
+	public void testMoveFromWasteToFoundationWithEMPTY_WASTE() {
+		Suit suit = Suit.PIKES;
+		Game game = new Game();
+		assertEquals(Error.EMPTY_WASTE, game.moveFromWasteToFoundation(suit));
+		assertTrue(game.getWaste().empty());
+		assertTrue(game.getFoundations().get(suit).empty());
+	}
+	
+	@Test
+	public void testMoveFromWasteToFoundationWithNO_FIT_FOUNDATION() {
+		Suit suit = Suit.PIKES;
+		Card card = new CardBuilder().number(Number.FIVE).suit(suit).build();
+		Game game = new Game();
+		game.getWaste().push(card);
+		assertEquals(Error.NO_FIT_FOUNDATION, game.moveFromWasteToFoundation(suit));
+		assertEquals(card, game.getWaste().peek());
+		assertTrue(game.getFoundations().get(suit).empty());
+	}
+	
+	@Test
+	public void testMoveFromWasteToPileWithEmptyPile() {
+		Card card = new CardBuilder().number(Number.KING).build();
+		Game game = new Game();
+		game.getWaste().push(card);
+		int pileNumber = 0;
+		game.getPiles().get(pileNumber).pop();
+		assertEquals(null, game.moveFromWasteToPile(pileNumber));
+		assertEquals(card, game.getPiles().get(pileNumber).peek());
+	}
+	
+	@Test
+	public void testMoveFromWasteToPileWithEmptyWithNO_FIT_PILE() {
+		Card card = new CardBuilder().number(Number.SEVEN).build();
+		Game game = new Game();
+		game.getWaste().push(card);
+		int pileNumber = 0;
+		game.getPiles().get(pileNumber).pop();
+		assertEquals(Error.NO_FIT_PILE, game.moveFromWasteToPile(pileNumber));
+		assertEquals(card, game.getWaste().peek());
+		assertTrue(game.getPiles().get(pileNumber).empty());
+	}
+	
+	
+
 
 }
