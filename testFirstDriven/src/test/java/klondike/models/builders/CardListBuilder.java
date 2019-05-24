@@ -1,7 +1,9 @@
-package klondike.models;
+package klondike.models.builders;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import klondike.models.Card;
 
 public class CardListBuilder {
 

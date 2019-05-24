@@ -1,4 +1,8 @@
-package klondike.models;
+package klondike.models.builders;
+
+import klondike.models.Foundation;
+import klondike.models.Number;
+import klondike.models.Suit;
 
 public class FilledFoundationBuilder {
 	

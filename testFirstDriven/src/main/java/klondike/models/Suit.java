@@ -3,11 +3,12 @@ package klondike.models;
 public enum Suit {
 
     HEARTS(Color.RED, 'H'),
-    DIAMONDS(Color.RED, 'D'),
     CLOVERS(Color.BLACK, 'C'),
+    DIAMONDS(Color.RED, 'D'),
     PIKES(Color.BLACK, 'P');
 
     private final Color color;
+    
     private final char initial;
 
     Suit(Color color, char initial) {

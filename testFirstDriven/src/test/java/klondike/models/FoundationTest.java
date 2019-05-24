@@ -1,40 +1,32 @@
 package klondike.models;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Test;
 
-public class FoundationTest {
+import klondike.models.builders.CardBuilder;
+import klondike.models.builders.FilledFoundationBuilder;
+import klondike.models.builders.FoundationBuilder;
 
-	@Test
-	public void testEmpty() {
-		assertTrue(new FoundationBuilder().build().empty());
+public class FoundationTest extends CardStackTest {
+
+	private Suit suit = Suit.PIKES;
+	
+	@Override
+	protected CardStack createCardStack() {
+		return new FoundationBuilder().suit(this.suit).build();
 	}
-
-	@Test
-	public void testNotEmpty() {
-		Foundation foundation = new FoundationBuilder().suit(Suit.HEARTS)
-				.card(new CardBuilder().suit(Suit.HEARTS).build()).build();
-		assertFalse(foundation.empty());
-	}
-
-	@Test
-	public void testPush() {
-		Waste waste = new Waste();
-		Card card = new CardBuilder().build();
-		waste.push(card);
-		assertEquals(card, waste.peek());
-	}
-
-	@Test
-	public void testPop() {
-		Waste waste = new Waste();
-		Card card = new CardBuilder().build();
-		waste.push(card);
-		assertEquals(card, waste.pop());
-		assertTrue(waste.empty());
+	
+	@Override
+	protected List<Card> getCards(){
+		List<Card> cards = new ArrayList<Card>();
+		cards.add(new CardBuilder().number(Number.AS).suit(this.suit).facedUp().build());
+		cards.add(new CardBuilder().number(Number.TWO).suit(this.suit).facedUp().build());
+		return cards;
 	}
 	
 	@Test 
@@ -44,55 +36,51 @@ public class FoundationTest {
 	
 	@Test 
 	public void testIsNotCompleted() {
-		Foundation foundation = new FilledFoundationBuilder().number(Number.KING).build();
-		foundation.pop();
+		Foundation foundation = new FilledFoundationBuilder().number(Number.QUEEN).build();
 		assertFalse(foundation.isComplete());
 	}
 
 	@Test 
 	public void testFitsInEmptyWithAs() {
-		Suit suit = Suit.DIAMONDS;
-		Foundation foundation = new FoundationBuilder().suit(suit).build();
-		assertTrue(foundation.fitsIn(new CardBuilder().number(Number.AS).suit(suit).build()));
+		Foundation foundation = new FoundationBuilder().suit(this.suit).build();
+		assertTrue(foundation.fitsIn(new CardBuilder().number(Number.AS).suit(this.suit).build()));
 	}
 	
 	@Test 
 	public void testFitsInEmptyWithAsWrongSuit() {
-		Foundation foundation = new FoundationBuilder().suit(Suit.DIAMONDS).build();
+		Foundation foundation = new FoundationBuilder().suit(this.suit).build();
 		assertFalse(foundation.fitsIn(new CardBuilder().number(Number.AS).suit(Suit.CLOVERS).build()));
 	}
 	
 	@Test 
 	public void testFitsInEmptyWithWrongNumber() {
-		Suit suit = Suit.DIAMONDS;
-		Foundation foundation = new FoundationBuilder().suit(suit).build();
-		assertFalse(foundation.fitsIn(new CardBuilder().number(Number.QUEEN).suit(suit).build()));
-	}
-	
-	@Test 
-	public void testFitsInNotEmptyWithWrongNumber() {
-		Suit suit = Suit.DIAMONDS;
-		Foundation foundation = new FoundationBuilder().suit(suit).build();
-		foundation.push(new CardBuilder().number(Number.AS).suit(suit).build());
-		foundation.push(new CardBuilder().number(Number.TWO).suit(suit).build());
-		assertFalse(foundation.fitsIn(new CardBuilder().number(Number.FIVE).suit(suit).build()));
-	}
-	
-	@Test 
-	public void testFitsInNotEmptyWithWrongSuit() {
-		Suit suit = Suit.DIAMONDS;
-		Foundation foundation = new FoundationBuilder().suit(suit).build();
-		foundation.push(new CardBuilder().number(Number.AS).suit(suit).build());
-		foundation.push(new CardBuilder().number(Number.TWO).suit(suit).build());
-		assertFalse(foundation.fitsIn(new CardBuilder().number(Number.THREE).suit(Suit.CLOVERS).build()));
+		Foundation foundation = new FoundationBuilder().suit(this.suit).build();
+		assertFalse(foundation.fitsIn(new CardBuilder().number(Number.QUEEN).suit(this.suit).build()));
 	}
 	
 	@Test 
 	public void testFitsInWithNotEmpty() {
-		Suit suit = Suit.DIAMONDS;
-		Foundation foundation = new FoundationBuilder().suit(suit).build();
-		foundation.push(new CardBuilder().number(Number.AS).suit(suit).build());
-		foundation.push(new CardBuilder().number(Number.TWO).suit(suit).build());
-		assertTrue(foundation.fitsIn(new CardBuilder().number(Number.THREE).suit(suit).build()));
+		Foundation foundation = this.createFoundationWithCards();
+		assertTrue(foundation.fitsIn(new CardBuilder().number(Number.THREE).suit(this.suit).build()));
 	}
+	
+	@Test 
+	public void testFitsInNotEmptyWithWrongNumber() {
+		Foundation foundation = this.createFoundationWithCards();
+		assertFalse(foundation.fitsIn(new CardBuilder().number(Number.FOUR).suit(this.suit).build()));
+	}
+	
+	@Test 
+	public void testFitsInNotEmptyWithWrongSuit() {
+		Foundation foundation = this.createFoundationWithCards();
+		assertFalse(foundation.fitsIn(new CardBuilder().number(Number.THREE).suit(Suit.CLOVERS).build()));
+	}
+
+	private Foundation createFoundationWithCards() {
+		Foundation foundation = new FoundationBuilder().suit(this.suit).
+				card(this.getCards().get(0)).
+				card(this.getCards().get(1)).build();
+		return foundation;
+	}
+
 }

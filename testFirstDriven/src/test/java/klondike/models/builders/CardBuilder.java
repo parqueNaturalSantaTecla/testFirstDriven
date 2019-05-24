@@ -1,4 +1,8 @@
-package klondike.models;
+package klondike.models.builders;
+
+import klondike.models.Card;
+import klondike.models.Number;
+import klondike.models.Suit;
 
 public class CardBuilder {
 
@@ -8,28 +12,28 @@ public class CardBuilder {
 
     private boolean facedUp;
     
-    CardBuilder() {
+    public CardBuilder() {
     	this.suit = Suit.CLOVERS;
     	this.number = Number.AS;
     	this.facedUp = false;
     }
     
-    CardBuilder suit(Suit suit) {
+    public CardBuilder suit(Suit suit) {
     	this.suit = suit;
     	return this;
     }
     
-    CardBuilder number(Number number) {
+    public CardBuilder number(Number number) {
     	this.number = number;
     	return this;
     }
     
-    CardBuilder facedUp() {
+    public CardBuilder facedUp() {
     	this.facedUp = true;
     	return this;
     }
     
-    Card build() {
+    public Card build() {
     	Card card = new Card(this.suit, this.number);
     	if (this.facedUp) {
     		card.flip();

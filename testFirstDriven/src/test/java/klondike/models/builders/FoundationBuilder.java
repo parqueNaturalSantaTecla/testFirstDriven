@@ -1,7 +1,11 @@
-package klondike.models;
+package klondike.models.builders;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import klondike.models.Card;
+import klondike.models.Foundation;
+import klondike.models.Suit;
 
 public class FoundationBuilder {
 

@@ -1,4 +1,4 @@
-package klondike.models;
+package klondike.models.builders;
 
 public class GameBuilder {
 

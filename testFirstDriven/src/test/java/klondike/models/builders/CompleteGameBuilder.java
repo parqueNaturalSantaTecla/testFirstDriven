@@ -1,6 +1,11 @@
-package klondike.models;
+package klondike.models.builders;
 
 import java.util.Map;
+
+import klondike.models.Foundation;
+import klondike.models.Game;
+import klondike.models.Number;
+import klondike.models.Suit;
 
 public class CompleteGameBuilder {
 
